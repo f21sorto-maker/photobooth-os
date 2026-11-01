@@ -1,8 +1,8 @@
 # QA defect log — photobooth-os — 2026-11-01
 
-**Run:** Application reliability validation (cron automation)  
-**Branch:** `cursor/application-reliability-validation-6882`  
-**Repo state:** Initial commit only (`README.md`); no frontend, backend, or portal code in tree.
+**Run:** Application reliability validation (push automation on `main`)  
+**Branch:** `cursor/application-reliability-validation-d0c4`  
+**Repo state:** Initial commit on `main` (`7d7fa96`); QA/bootstrap artifacts on validation branch only until merged.
 
 ## Services tested
 
@@ -12,12 +12,25 @@
 | Backend | Not present | No API server, handlers, or OpenAPI |
 | Client portal | Not present | No portal app or auth flow |
 | Supporting services | Not present | No Docker, workers, or integration config |
+| QA automation | **Present** | `.cursor/commands/qa-reliability-10-pass.md`, `scripts/qa-reliability-bootstrap-check.sh` |
+
+## Pass 1 coverage inventory (routes / endpoints)
+
+| Surface | Expected (product) | Found in repo |
+|---------|-------------------|---------------|
+| Frontend routes | Booth operator UI | **0** — no router or pages |
+| Portal routes | Client login + self-service | **0** |
+| Backend HTTP endpoints | REST/GraphQL + `/health` | **0** |
+| CLI commands | Dev/ops scripts | **1** — `scripts/qa-reliability-bootstrap-check.sh` |
+| Cursor commands | Agent QA loop | **1** — `.cursor/commands/qa-reliability-10-pass.md` |
+
+**Backend search (Pass 1):** no matches for `express`, `fastify`, `hono`, `app.get`, or `openapi` in application code.
 
 ## Pass summaries
 
 | Pass | Focus | Working | Broken | Gaps | Incomplete |
 |------|--------|---------|--------|------|------------|
-| 1 | Inventory | Git repo clones; README renders | — | Entire stack missing | — |
+| 1 | Inventory | Git repo; README; AGENTS.md; QA command + bootstrap script | — | Entire product stack missing | — |
 | 2 | Frontend controls | — | — | No UI to click | — |
 | 3 | Forms/modals | — | — | No forms | — |
 | 4 | Portal | — | — | No portal | — |
@@ -26,7 +39,7 @@
 | 7 | Integrations | — | — | No external integrations | — |
 | 8 | Responsive layout | — | — | No layouts | — |
 | 9 | Error/resilience | — | — | No runtime to fault-inject | — |
-| 10 | Reconciliation | QA loop prompt added (see PR) | — | Same gaps as Pass 1 | — |
+| 10 | Reconciliation | QA loop + bootstrap probe; README links | — | Same product gaps as Pass 1 | — |
 
 ## Defect entries
 
@@ -113,8 +126,37 @@
 | Component | QA automation prompt |
 | Status | **fixed this session** |
 | Root cause | No repeatable 10-pass loop prompt existed in repo. |
-| Fix applied | Added command prompt enforcing 10 passes, full-stack coverage, defect log schema, fix-and-retest rules. |
+| Fix applied | Added command prompt enforcing 10 passes, full-stack coverage, defect log schema, fix-and-retest rules, per-pass full-stack checklist, test plan, pre-output checklist. |
 | Verification | **pass** — file present and matches content rules |
+
+### PASS10-002
+
+| Field | Value |
+|--------|--------|
+| Pass | 10 |
+| Severity | **medium** |
+| Area | process |
+| File path | `scripts/qa-reliability-bootstrap-check.sh` |
+| Component | Bootstrap probe |
+| Status | **fixed this session** |
+| Root cause | No automated way to verify frontend/backend/portal bootstrap before Pass 1. |
+| Fix applied | Added non-interactive shell probe; exits non-zero when layers not discoverable. |
+| Reproduction | Run `./scripts/qa-reliability-bootstrap-check.sh` on empty repo. |
+| Verification | **pass** — script reports MISSING artifacts and exit code 1 |
+
+### PASS10-003
+
+| Field | Value |
+|--------|--------|
+| Pass | 10 |
+| Severity | **low** |
+| Area | docs |
+| File path | `README.md`, `AGENTS.md` |
+| Component | Agent bootstrap docs |
+| Status | **fixed this session** |
+| Root cause | README was title-only; agents could not find QA loop entrypoint. |
+| Fix applied | Linked QA command, bootstrap script, and AGENTS.md service matrix. |
+| Verification | **pass** — bootstrap script detects README keywords |
 
 ## Regressions
 
@@ -122,8 +164,9 @@ None detectable — no application baseline from an earlier pass with working fe
 
 ## Reconciliation (Pass 10 vs Pass 1)
 
-- **Unchanged:** Entire product stack still absent on `main`/working branch except QA artifacts added in this PR.
-- **Improved:** Repeatable Cursor command for future full validation once code exists.
+- **Unchanged:** Entire product stack still absent on `main`; critical/high gaps PASS1-001–004 remain open.
+- **Improved:** Repeatable 10-pass Cursor command, bootstrap probe, README/AGENTS entrypoints for future E2E runs.
+- **Regressions:** None (no working product baseline).
 
 ## Next actions for product owner
 

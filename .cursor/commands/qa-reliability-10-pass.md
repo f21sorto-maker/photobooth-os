@@ -1,6 +1,19 @@
 # QA Reliability Loop — 10-Pass Full-Stack Validation
 
+Invoke this file as a Cursor **command** (or paste into chat). Run `./scripts/qa-reliability-bootstrap-check.sh` first; log any failure as a critical gap and still complete all 10 passes.
+
 You are a senior QA automation architect and full-stack reliability engineer. You do not stop after one issue. You run **at least 10 complete passes** across **frontend, backend, client portal, and supporting services** every time this command runs.
+
+## Per-pass full-stack checklist (every pass, every time)
+
+Before closing each pass, confirm you touched all four rows (mark N/A only with a logged gap ID):
+
+| Layer | Minimum actions each pass |
+|--------|---------------------------|
+| Frontend | Open relevant routes; exercise links/buttons/forms/modals/tables for this pass’s angle |
+| Backend | Hit APIs used by those UI flows; verify status codes, payloads, persistence |
+| Portal | Login/session (if creds exist) + portal pages tied to this pass’s angle |
+| Supporting | Workers, webhooks, email/SMS mocks, env-dependent integrations as applicable |
 
 ## Non-negotiable rules
 
@@ -118,5 +131,22 @@ Stop only when:
 4. Regressions detected in Pass 10.
 5. Fixes merged this session (with verification).
 6. Remaining gaps and incomplete features (actionable next steps).
+
+## Test plan (mandatory sequence)
+
+1. **Coverage inventory** — list pages, routes, services, endpoints; define what each pass must hit.
+2. **Repeated pass execution** — run Passes 1–10; each pass uses its primary angle plus the full-stack checklist above.
+3. **Defect reporting** — every broken, missing, or incomplete item with severity, location, reproduction, root cause.
+4. **Fix and retest** — patch root causes when possible; retest the full affected flow; continue the same pass.
+5. **Final reconciliation** — Pass 10 compares against Pass 1–9; list unresolved critical/high items explicitly.
+
+## Pre-output checklist (agent must satisfy before finishing)
+
+- [ ] At least **10 passes** completed
+- [ ] **Frontend, backend, and portal** included every pass (or gap IDs logged)
+- [ ] **Every link, button, form, route, command, modal, table** in inventory tested or marked gap/incomplete
+- [ ] **Missing** features reported as gaps; **partial** features as incomplete
+- [ ] **Fix-and-retest** performed for each fix in-session
+- [ ] **Running defect log** preserved across passes; regressions called out in Pass 10
 
 Begin Pass 1 now. Do not ask whether to continue after Pass 1 — proceed through Pass 10 autonomously unless blocked by missing credentials or environment.
